@@ -1,4 +1,4 @@
-package com.redgear.scriptly.lang
+package com.redgear.scriptly.server.lang
 
 /**
  * Created by LordBlackHole on 9/4/2016.

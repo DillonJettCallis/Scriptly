@@ -1,8 +1,8 @@
-package com.redgear.scriptly.repo.impl
+package com.redgear.scriptly.server.repo.impl
 
-import com.redgear.scriptly.config.Config
-import com.redgear.scriptly.repo.Repository
-import com.redgear.scriptly.repo.Repository.Package
+import com.redgear.scriptly.server.config.Config
+import com.redgear.scriptly.server.repo.Repository
+import com.redgear.scriptly.server.repo.Repository.Package
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils
 import org.eclipse.aether.DefaultRepositorySystemSession
 import org.eclipse.aether.RepositorySystem
@@ -29,6 +29,7 @@ import org.eclipse.aether.util.graph.selector.OptionalDependencySelector
 /**
  * Created by LordBlackHole on 7/4/2016.
  */
+@org.springframework.stereotype.Repository
 class AetherRepo implements Repository {
 
     private final RepositorySystem system

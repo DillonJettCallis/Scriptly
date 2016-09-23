@@ -1,4 +1,4 @@
-package com.redgear.scriptly.repo
+package com.redgear.scriptly.server.repo
 
 /**
  * Created by LordBlackHole on 7/4/2016.

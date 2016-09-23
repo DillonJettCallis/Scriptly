@@ -1,6 +1,6 @@
-package com.redgear.scriptly.lang
+package com.redgear.scriptly.server.lang
 
-import com.redgear.scriptly.repo.Repository
+import com.redgear.scriptly.server.repo.Repository
 
 /**
  * Created by LordBlackHole on 9/2/2016.
@@ -8,7 +8,7 @@ import com.redgear.scriptly.repo.Repository
 class ClojureLang implements Language {
 
     @Override
-    void exec(File source, Repository repo, List<String> args) {
+    Closure exec(File source, Repository repo) {
         def deps = parse(source, repo)
 
         def urls = deps.deps.collect {
@@ -19,7 +19,8 @@ class ClojureLang implements Language {
 
         def oldLoader = Thread.currentThread().getContextClassLoader()
 
-        try {
+        return {List<String> args ->
+            try {
             Thread.currentThread().setContextClassLoader(loader)
 
             def Clojure = loader.loadClass('clojure.java.api.Clojure')
@@ -30,16 +31,19 @@ class ClojureLang implements Language {
 
             def read = Clojure.getMethod('read', String.class)
 
-            def argArray = args.collect{'"' + it + '"'}.toString()
+            def argArray = args.collect {'"' + it + '"'}.toString()
 
-            eval.invoke(read.invoke(null, "(def args ${argArray})".toString()))
+                eval.invoke(read.invoke(null, "(def args ${argArray})".toString()))
 
-            eval.invoke(read.invoke(null, """(load-file "${deps.source.toString().replace('\\', '\\\\')}"))""".toString()))
+                eval.invoke(read.invoke(null, """(load-file "${
+                    deps.source.toString().replace('\\', '\\\\')
+                }"))""".toString()))
 
-        } catch (ClassNotFoundException e) {
-          throw new Exception('Could not find Clojure. Is it included on the class path?', e)
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldLoader)
+            } catch (ClassNotFoundException e) {
+                throw new Exception('Could not find Clojure. Is it included on the class path?', e)
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldLoader)
+            }
         }
     }
 

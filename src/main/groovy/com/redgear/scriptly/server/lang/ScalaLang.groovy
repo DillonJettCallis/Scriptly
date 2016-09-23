@@ -1,6 +1,6 @@
-package com.redgear.scriptly.lang
+package com.redgear.scriptly.server.lang
 
-import com.redgear.scriptly.repo.Repository
+import com.redgear.scriptly.server.repo.Repository
 import org.apache.commons.lang3.SystemUtils
 
 import javax.script.ScriptContext
@@ -13,7 +13,7 @@ import javax.script.ScriptEngineManager
 class ScalaLang implements Language {
 
     @Override
-    void exec(File source, Repository repo, List<String> args) {
+    Closure exec(File source, Repository repo) {
         def deps = parse(source, repo)
 
         def all = deps.deps
@@ -40,14 +40,16 @@ class ScalaLang implements Language {
 
         engine.settings().classpath().value_$eq(newPath)
 
-        def bind = engine.createBindings()
+        return { List<String> args ->
+            def bind = engine.createBindings()
 
-        bind.put('args', args as String[])
+            bind.put('args', args as String[])
 
-        engine.setBindings(bind, ScriptContext.ENGINE_SCOPE)
+            engine.setBindings(bind, ScriptContext.ENGINE_SCOPE)
 
-        deps.source.withReader {
-            engine.eval(it)
+            deps.source.withReader {
+                engine.eval(it)
+            }
         }
     }
 

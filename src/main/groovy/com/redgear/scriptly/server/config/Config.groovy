@@ -1,4 +1,4 @@
-package com.redgear.scriptly.config
+package com.redgear.scriptly.server.config
 
 import java.nio.file.Paths
 

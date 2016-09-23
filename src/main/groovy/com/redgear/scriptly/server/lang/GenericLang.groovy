@@ -1,6 +1,6 @@
-package com.redgear.scriptly.lang
+package com.redgear.scriptly.server.lang
 
-import com.redgear.scriptly.repo.Repository
+import com.redgear.scriptly.server.repo.Repository
 
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
@@ -18,11 +18,11 @@ class GenericLang implements Language {
     }
 
     @Override
-    void exec(File source, Repository repo, List<String> args) {
-        runWithEngine(source, repo, lang, args)
+    Closure exec(File source, Repository repo) {
+        runWithEngine(source, repo, lang)
     }
 
-    void runWithEngine(File source, Repository repo, String engineName, List<String> args) {
+    Closure runWithEngine(File source, Repository repo, String engineName) {
         def deps = parse(source, repo)
 
         def urls = deps.deps.collect {
@@ -39,14 +39,16 @@ class GenericLang implements Language {
             throw new Exception("Failed to load Script Engine. Either this language is not supported or the script is missing the correct dependency. ")
         }
 
-        def bind = engine.createBindings()
+        return {List<String> args ->
+            def bind = engine.createBindings()
 
-        bind.put('args', args as String[])
+            bind.put('args', args as String[])
 
-        engine.setBindings(bind, ScriptContext.ENGINE_SCOPE)
+            engine.setBindings(bind, ScriptContext.ENGINE_SCOPE)
 
-        deps.source.withReader {
-            engine.eval(it)
+            deps.source.withReader {
+                engine.eval(it)
+            }
         }
     }
 

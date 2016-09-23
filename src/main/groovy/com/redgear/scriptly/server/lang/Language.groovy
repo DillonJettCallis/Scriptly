@@ -1,7 +1,6 @@
-package com.redgear.scriptly.lang
+package com.redgear.scriptly.server.lang
 
-import com.redgear.scriptly.repo.Repository
-import org.apache.commons.lang3.StringUtils
+import com.redgear.scriptly.server.repo.Repository
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -10,7 +9,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
  */
 trait Language {
 
-    abstract void exec(File source, Repository repo, List<String> args)
+    abstract Closure exec(File source, Repository repo)
 
     String commentStart() {
         return '/*'

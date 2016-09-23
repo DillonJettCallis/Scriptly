@@ -1,8 +1,8 @@
-package com.redgear.scriptly.lang
+package com.redgear.scriptly.server.lang
 
 import com.google.common.io.Files
 import com.innowhere.relproxy.jproxy.JProxyShell
-import com.redgear.scriptly.repo.Repository
+import com.redgear.scriptly.server.repo.Repository
 
 /**
  * Created by LordBlackHole on 9/2/2016.
@@ -12,7 +12,7 @@ class JavaLang implements Language {
 
 
     @Override
-    void exec(File source, Repository repo, List<String> args) {
+    Closure exec(File source, Repository repo) {
 
         def deps = parse(source, repo)
 
@@ -23,7 +23,7 @@ class JavaLang implements Language {
             Files.copy(it, new File(dir, it.name))
         }
 
-        run(deps.source, args)
+        return {List<String> args -> run(deps.source, args) }
     }
 
     void run(File source, List<String> args) {
