@@ -18,8 +18,6 @@ class Scriptly {
 
         Repository repo = new AetherRepo(config)
 
-        println args
-
         if (args.length < 2) {
             throw new Exception("Expecting at least two arguments, language and source file")
         }
@@ -39,6 +37,8 @@ class Scriptly {
             language = new RubyLang(lang)
         } else if (lang == 'python' || lang == 'jython') {
             language = new PythonLang(lang)
+        } else if (lang == 'kotlin') {
+            language = new KotlinLang()
         } else {
             language = new GenericLang(lang)
         }

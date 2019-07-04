@@ -53,7 +53,7 @@ class AetherRepo implements Repository {
 
         Artifact artifact = new DefaultArtifact(mod);
 
-        DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter( JavaScopes.COMPILE,  );
+        DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter( JavaScopes.COMPILE, JavaScopes.RUNTIME );
 
         DependencyFilterUtils.andFilter()
 

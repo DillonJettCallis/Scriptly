@@ -19,17 +19,13 @@ class GenericLang implements Language {
 
     @Override
     void exec(File source, Repository repo, List<String> args) {
-        runWithEngine(source, repo, lang, args)
+        run(source, repo, lang, args)
     }
 
-    void runWithEngine(File source, Repository repo, String engineName, List<String> args) {
+    void run(File source, Repository repo, String engineName, List<String> args) {
         def deps = parse(source, repo)
 
-        def urls = deps.deps.collect {
-            it.toURI().toURL()
-        }
-
-        def loader = new URLClassLoader (urls as URL[], Thread.currentThread().contextClassLoader.parent)
+        def loader = buildClassLoader(deps)
 
         def manager = new ScriptEngineManager(loader)
 
@@ -39,6 +35,18 @@ class GenericLang implements Language {
             throw new Exception("Failed to load Script Engine. Either this language is not supported or the script is missing the correct dependency. ")
         }
 
+        runWithEngine(engine, deps, args)
+    }
+
+    ClassLoader buildClassLoader(Language.DepInfo deps) {
+        def urls = deps.deps.collect {
+            it.toURI().toURL()
+        }
+
+        return new URLClassLoader (urls as URL[], Thread.currentThread().contextClassLoader.parent)
+    }
+
+    void runWithEngine(ScriptEngine engine, Language.DepInfo deps, List<String> args) {
         def bind = engine.createBindings()
 
         bind.put('args', args as String[])
