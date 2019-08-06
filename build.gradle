@@ -1,42 +1,30 @@
+plugins {
+  id 'application'
+  id 'groovy'
+  id 'maven'
+}
+
 group 'com.redgear'
 version '0.1.0-SNAPSHOT'
 
-apply plugin: 'groovy'
-apply plugin: 'maven'
-apply plugin: 'application'
-
-mainClassName =  'com.redgear.scriptly.Scriptly'
-
-run {
-    def exec = System.getProperty("exec.args")
-    if(exec)
-        args exec.split()
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.redgear.scriptly.Scriptly'
-    }
+application {
+  mainClassName = 'com.redgear.scriptly.Scriptly'
 }
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+  compile 'org.codehaus.groovy:groovy-all:3.0.0-beta-2'
 
-    compile 'com.innowhere:relproxy:0.8.8'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.8.1'
 
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.1'
+  compile 'org.apache.maven:maven-aether-provider:3.3.9'
+  compile 'org.eclipse.aether:aether-impl:1.1.0'
+  compile 'org.eclipse.aether:aether-transport-http:1.1.0'
+  compile 'org.eclipse.aether:aether-transport-file:1.1.0'
+  compile 'org.eclipse.aether:aether-connector-basic:1.1.0'
 
-    compile 'org.apache.maven:maven-aether-provider:3.3.9'
-    compile 'org.eclipse.aether:aether-impl:1.1.0'
-    compile 'org.eclipse.aether:aether-transport-http:1.1.0'
-    compile 'org.eclipse.aether:aether-transport-file:1.1.0'
-    compile 'org.eclipse.aether:aether-connector-basic:1.1.0'
-
-    compile 'org.slf4j:slf4j-simple:1.7.21'
-
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+  compile 'org.slf4j:slf4j-simple:1.7.21'
 }

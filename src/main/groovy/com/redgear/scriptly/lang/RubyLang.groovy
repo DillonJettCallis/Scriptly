@@ -1,18 +1,16 @@
 package com.redgear.scriptly.lang
-/**
- * Created by LordBlackHole on 9/4/2016.
- */
+
 class RubyLang extends GenericLang {
 
-    RubyLang(String lang) {
-        super(lang)
-    }
+  RubyLang(String lang) {
+    super(lang)
+  }
 
-    String commentStart() {
-        return '=begin'
-    }
+  String commentStart() {
+    return '=begin'
+  }
 
-    String commentEnd() {
-        return '=end'
-    }
+  String commentEnd() {
+    return '=end'
+  }
 }

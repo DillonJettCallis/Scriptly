@@ -7,7 +7,7 @@ class KotlinLang extends GenericLang {
   }
 
   ClassLoader buildClassLoader(Language.DepInfo deps) {
-    def newPath = deps.deps.collect{it.toString()}.join(File.pathSeparator)
+    def newPath = deps.deps.collect { it.toString() }.join(File.pathSeparator)
 
     System.setProperty("kotlin.script.classpath", newPath)
 
