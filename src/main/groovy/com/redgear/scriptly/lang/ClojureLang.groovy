@@ -27,9 +27,9 @@ class ClojureLang implements Language {
 
       def read = Clojure.getMethod('read', String.class)
 
-      def argArray = args.collect { '"' + it + '"' }.toString()
+      def argArray = args.collect { '"' + it + '"' }.join(' ')
 
-      eval.invoke(read.invoke(null, "(def args ${argArray})".toString()))
+      eval.invoke(read.invoke(null, "(def args [${argArray}])".toString()))
 
       eval.invoke(read.invoke(null, "(do ${deps.source})".toString()))
 
