@@ -1,6 +1,6 @@
-#Scriptly
+# Scriptly
 
-##Goals
+## Goals
 
 To be able to run any JVM language script 
 * ... with Maven dependencies,
@@ -8,46 +8,43 @@ To be able to run any JVM language script
 * ... and to work the same on both *nix and Windows. 
 
 
-##How it works
+## How it works
 Scriptly is pretty simple actually, so simple I can't believe no one has tried it before. 
 You execute the Scriptly main method passing in the name of the language and a file. 
 
-Example: "scriptly scala C:\myScalaScript.scala someArgForScript"
+Example: "scriptly kotlin C:\myScalaScript.kotlin someArgForScript"
 
 Scriptly will read in the file. 
 
 
-* If your file starts with a #!, the first line will be skipped. 
-* After that if the first line starts with 'rem' ....
+* If your file starts with a `#!` or `::#!`, then all lines until a corresponding `!#` or `::!#`  will be skipped. 
+ This is to allow standalone shell scripts in either bash or cmd. (More info below).
 * Then Scriptly will look for a comment. This will depend on the language, but by default it will try to find a C 
 style block comment begining with /* and ending with */. (Please note that any extra '\*' are not allowed)
 * If that comment is found Scriptly will read it and it will expect it to contain a list of Maven dependencies
 delimited by whitespace in Gradle short style, ie: groupId:artifactId:version. 
-For example: "org.slf4j:slf4j-api:1.7.21 org.slf4j:slf4j-simple:1.7.21"
+For example: `"org.slf4j:slf4j-api:1.7.21 org.slf4j:slf4j-simple:1.7.21"`
 * Scriptly will then take that list and resolve all those dependencies, using your local maven repo + central + 
 other repos you can configure in a json file located in ~/.scriptly/config.json (Which will be generated on first run)
 * Using those dependencies, Scriptly will take the rest of your file and run it through the ScriptEngine of the correct
 language, passing any extra arguments you provided in a Java String array variable named "args". 
 
 
-##Language implementations
+## Language implementations
 
-* Java is implemented using a library called RelProxy, which is included in the Scriptly distro. 
-The Java support is fairly limited, as Java wasn't made for scripting and neither was RelProxy. 
-You can only have one class, it must be named properly according to Java rules (ie: class Script must be inside 
-class Script.java) and it must have a public static void main(String[] args) method. Still, it's better than nothing
- and at least is an option if you only know Java and don't want to learn something else. (Although I would still
- recommend trying Groovy if you want to do more.)
+* Java is not supported as it don't have a standard jsr223 implementation. 
+ Non-standard implementations do exist, but use at your own risk.
+ Try using Groovy instead, it supports most Java syntax
  
 * Groovy works with no special casing at all. Just include the Groovy library in your dependencies.
  
-* Scala has a small amount of special casing, as it's ScriptEngine isn't 100% compliant with js223. This shouldn't 
-effect users except that it makes the Scala scripts more likely to break in the future with Scala updates. Other than 
-that warning, just include the scala compiler on your dependencies. 
+* Scala has a jsr223 implementation but it's just a thin wrapper around the Scala repl and isn't 
+ fully compliant. The non compliant aspects even have breaking changes between scala versions so I've
+ given up trying to support it. Try Kotlin, it's syntactically similar.
 
-* Clojure is special cased because there is no official Clojure jsr223 implementation. That shouldn't matter much
-unless the Clojure script api ever changes. The only important note is that Clojure users a String instead of a comment
-to hold it's maven dependencies. Just use a single double-quote string at the top of your file. 
+* Clojure is special cased because there is no official Clojure jsr223 implementation, however it has it's own
+ scripting api that works well and is very simple. The only important note is that Clojure users a String 
+ instead of a comment to hold it's maven dependencies. Just use a single double-quote string at the top of your file. 
  
 * Javascript requires no special casing at all. If you're on Java 8+ nashorn will be used and before that, rhino. 
 You can in fact use 'nashorn', 'rhino' or 'ecmascript' as language names. 
@@ -61,23 +58,47 @@ to convert it to a Ruby array.
 put your dependencies in a triple-single-quoted string. Double quoted strings are NOT supported. 
 Example: '''org.python:jython-standalone:2.7.0'''
 
-* Kotlin is NOT supported yet, only because Kotlin doesn't support jsr223. If/when they add that, Scriptly should
-instantly work with it. There may be unofficial implementations of jsr223 for Kotlin and anyone is free to try those. 
+* Kotlin is supported, just include the Kotlin jsr223 implementation ie: `org.jetbrains.kotlin:kotlin-scripting-jsr223:1.3.40`
+ One thing to know is that Kotlin does NOT provide a variable named `args`, instead it has a `Map<String, Any?>` named `bindings`
+ and this map has a key named `args`. So to make the typing correct it is recommended you have `val args = bindings["args"] as Array<String>`
+ at the top of your script.
 
-* Ceylon: Same as Kotlin. 
+* Ceylon is NOT supported as there is not official jsr223 implantation. 
 
 * Any language with a jar that fully supports jsr223 should work, with the note that you
-must used Java style comments even if that language doesn't. 
+ must used Java style comments even if that language doesn't. 
 
 
 
 
-##Why do I have to include my language's compiler/language?
+## Why do I have to include my language's compiler/language?
 
-* That way, you can use whatever version you want. If I provided Scala 2.11 and you wanted to use 2.12
-you'd be out of luck. This way, you can just use whatever Scala version you want. You could use a different
-scala version in one script than another one right beside it. Or even in a different language. 
+* That way, you can use whatever version you want. If I provided Groovy 2.6 and you wanted to use 3.0
+you'd be out of luck. This way, you can just use whatever Groovy version you want. You could use a different
+groovy version in one script than another one right beside it. Or even in a different language. 
 
+## Standalone Shell Scripts
 
+Here are some examples on how you can use Scriptly for standalone polyglot shell scripts. 
 
+* *nix
+```bash
+#!
+exec scriptly groovy "$0" "$@"
+!#
 
+// The rest of the script is now groovy
+println 'Hello World'
+```
+
+* Windows
+```batch 
+::#!
+@echo off
+scriptly groovy %~dpnx0 %*
+goto :eof
+::!#
+
+// The rest of the script is now groovy
+println 'Hello World'
+```

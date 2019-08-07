@@ -1,5 +1,6 @@
 package com.redgear.scriptly.lang
 
+import com.redgear.scriptly.repo.Coordinate
 import com.redgear.scriptly.repo.Repository
 
 import static org.apache.commons.lang3.StringUtils.isBlank
@@ -88,14 +89,14 @@ trait Language {
 
     def separate = deps.trim().split(/\s+/)
 
-    return separate.collect { mod ->
+    def coords = separate.collect { mod ->
 
       def split = mod.trim().split(':')
 
-      def data = repo.resolvePackage(split[0], split[1], split[2])
+      new Coordinate(group: split[0], artifact: split[1], version: split[2])
+    }
 
-      data.dependencies + data.main
-    }.flatten()
+    repo.resolvePackages(coords)
   }
 
   static class DepInfo {

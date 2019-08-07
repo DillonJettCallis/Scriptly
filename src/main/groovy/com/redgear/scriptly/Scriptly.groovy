@@ -24,11 +24,7 @@ class Scriptly {
 
     Language language
 
-    if (lang == 'java') {
-      throw new Exception('Java is not supported. Java has not support for jsr223 and is a poor scripting language. Try groovy.')
-    } else if (lang == 'scala') {
-      throw new Exception("Scala is not supported. Scala's support of jsr223 is fragile and garbage. Try Kotlin.")
-    } else if (lang == 'clojure') {
+    if (lang == 'clojure') {
       language = new ClojureLang()
     } else if (lang == 'ruby' || lang == 'jruby') {
       language = new RubyLang(lang)

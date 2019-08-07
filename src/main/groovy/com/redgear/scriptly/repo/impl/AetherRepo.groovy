@@ -1,7 +1,7 @@
 package com.redgear.scriptly.repo.impl
 
 import com.redgear.scriptly.config.Config
-import com.redgear.scriptly.repo.Package
+import com.redgear.scriptly.repo.Coordinate
 import com.redgear.scriptly.repo.Repository
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils
 import org.eclipse.aether.DefaultRepositorySystemSession
@@ -44,49 +44,25 @@ class AetherRepo implements Repository {
 
 
   @Override
-  Package resolvePackage(String group, String artifactId, String version) {
-
-    def mod = "$group:$artifactId:$version"
-
-    Artifact artifact = new DefaultArtifact(mod);
+  List<File> resolvePackages(List<Coordinate> deps) {
+    def rawDeps = deps.collect { new Dependency(new DefaultArtifact(it.group, it.artifact, 'jar', it.version), JavaScopes.COMPILE) }
 
     DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE, JavaScopes.RUNTIME);
 
     DependencyFilterUtils.andFilter()
 
     CollectRequest collectRequest = new CollectRequest();
-    collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
+    collectRequest.setDependencies(rawDeps)
     collectRequest.setRepositories(repos);
 
     DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, classpathFlter);
 
     def dependencyResult = system.resolveDependencies(session, dependencyRequest)
 
-    def mainFile = dependencyResult.root.artifact.getFile()
-
-    List<File> artifactResults = dependencyResult.getArtifactResults().collect { it.artifact.file }
-
-    artifactResults.remove(mainFile)
-
-    return new Package() {
-      @Override
-      File getMain() {
-        return mainFile
-      }
-
-      @Override
-      List<File> getDependencies() {
-        return artifactResults
-      }
-
-      @Override
-      String toString() {
-        return mainFile.toString()
-      }
-    }
+    return dependencyResult.getArtifactResults().collect { it.artifact.file }
   }
 
-  public static DefaultRepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localRepoFile) {
+  private static DefaultRepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localRepoFile) {
     DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
     LocalRepository localRepo = new LocalRepository(localRepoFile);
@@ -97,7 +73,7 @@ class AetherRepo implements Repository {
     return session;
   }
 
-  public static RepositorySystem newRepositorySystem() {
+  private static RepositorySystem newRepositorySystem() {
     DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
     locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
     locator.addService(TransporterFactory.class, FileTransporterFactory.class);

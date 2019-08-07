@@ -2,6 +2,12 @@ package com.redgear.scriptly.repo
 
 interface Repository {
 
-  Package resolvePackage(String group, String artifact, String version)
+  List<File> resolvePackages(List<Coordinate> deps)
 
+}
+
+class Coordinate {
+  String group
+  String artifact
+  String version
 }
