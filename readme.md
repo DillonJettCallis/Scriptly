@@ -73,7 +73,7 @@ Example: '''org.python:jython-standalone:2.7.0'''
 
 ## Why do I have to include my language's compiler/language?
 
-* That way, you can use whatever version you want. If I provided Groovy 2.6 and you wanted to use 3.0
+* That way, you can use whatever version you want. If I provided Groovy 2.6 and you wanted to use 3.0.0-beta-2
 you'd be out of luck. This way, you can just use whatever Groovy version you want. You could use a different
 groovy version in one script than another one right beside it. Or even in a different language. 
 
@@ -87,6 +87,10 @@ Here are some examples on how you can use Scriptly for standalone polyglot shell
 exec scriptly groovy "$0" "$@"
 !#
 
+/*
+org.codehaus.groovy:groovy-jsr223:3.0.0-beta-2
+*/
+
 // The rest of the script is now groovy
 println 'Hello World'
 ```
@@ -98,6 +102,10 @@ println 'Hello World'
 scriptly groovy %~dpnx0 %*
 goto :eof
 ::!#
+
+/*
+org.codehaus.groovy:groovy-jsr223:3.0.0-beta-2
+*/
 
 // The rest of the script is now groovy
 println 'Hello World'

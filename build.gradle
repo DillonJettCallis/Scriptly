@@ -11,12 +11,18 @@ application {
   mainClassName = 'com.redgear.scriptly.Scriptly'
 }
 
+jar {
+  manifest {
+    attributes 'Main-Class': 'com.redgear.scriptly.Scriptly'
+  }
+}
+
 repositories {
   mavenCentral()
 }
 
 dependencies {
-  implementation 'org.codehaus.groovy:groovy-all:3.0.0-beta-2'
+  implementation 'org.codehaus.groovy:groovy:3.0.0-beta-2'
 
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9.2'
 
