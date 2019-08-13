@@ -32,6 +32,8 @@ class Scriptly {
       language = new PythonLang(lang)
     } else if (lang == 'kotlin') {
       language = new KotlinLang()
+    } else if (lang == 'lua' || lang == 'luaj') {
+      language = new LuaLang(lang)
     } else {
       language = new GenericLang(lang)
     }

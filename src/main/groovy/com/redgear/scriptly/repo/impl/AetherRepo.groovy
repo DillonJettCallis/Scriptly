@@ -1,13 +1,11 @@
 package com.redgear.scriptly.repo.impl
 
 import com.redgear.scriptly.config.Config
-import com.redgear.scriptly.repo.Coordinate
 import com.redgear.scriptly.repo.Repository
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils
 import org.eclipse.aether.DefaultRepositorySystemSession
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
-import org.eclipse.aether.artifact.Artifact
 import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
@@ -44,8 +42,8 @@ class AetherRepo implements Repository {
 
 
   @Override
-  List<File> resolvePackages(List<Coordinate> deps) {
-    def rawDeps = deps.collect { new Dependency(new DefaultArtifact(it.group, it.artifact, 'jar', it.version), JavaScopes.COMPILE) }
+  List<File> resolvePackages(List<String> deps) {
+    def rawDeps = deps.collect { new Dependency(new DefaultArtifact(it), JavaScopes.COMPILE) }
 
     DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE, JavaScopes.RUNTIME);
 

@@ -2,6 +2,7 @@ package com.redgear.scriptly.lang
 
 import com.redgear.scriptly.repo.Repository
 
+import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -29,13 +30,13 @@ class GenericLang implements Language {
     ScriptEngine engine = manager.getEngineByName(engineName)
 
     if (engine == null) {
-      throw new Exception("Failed to load Script Engine. Either this language is not supported or the script is missing the correct dependency. ")
+      throw new Exception("Failed to load Script Engine. Either '$lang' language is not supported or the script is missing the correct dependency. ")
     }
 
-    runWithEngine(engine, deps, args)
+    runWithEngine(engine, loader, deps, args)
   }
 
-  ClassLoader buildClassLoader(Language.DepInfo deps) {
+  ClassLoader buildClassLoader(DepInfo deps) {
     def urls = deps.deps.collect {
       it.toURI().toURL()
     }
@@ -43,14 +44,19 @@ class GenericLang implements Language {
     return new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader.parent)
   }
 
-  void runWithEngine(ScriptEngine engine, Language.DepInfo deps, List<String> args) {
-    def bind = engine.createBindings()
+  void runWithEngine(ScriptEngine engine, ClassLoader loader, DepInfo deps, List<String> args) {
+    def oldLoader = Thread.currentThread().getContextClassLoader()
 
-    bind.put('args', args as String[])
+    try {
+      Thread.currentThread().setContextClassLoader(loader)
 
-    engine.setBindings(bind, ScriptContext.ENGINE_SCOPE)
+      def bind = engine.getBindings(ScriptContext.ENGINE_SCOPE)
 
-    engine.eval(deps.source)
+      bind.put('args', args)
+
+      engine.eval(deps.source)
+    } finally {
+      Thread.currentThread().setContextClassLoader(oldLoader)
+    }
   }
-
 }

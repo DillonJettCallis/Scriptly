@@ -65,6 +65,9 @@ Example: '''org.python:jython-standalone:2.7.0'''
 
 * Ceylon is NOT supported as there is not official jsr223 implantation. 
 
+* Lua is supported, though I've only tested with the Luaj implementation, using the language name 'lua' 
+ and lua's block comments `--[[` and `]]` should be enough.
+
 * Any language with a jar that fully supports jsr223 should work, with the note that you
  must used Java style comments even if that language doesn't. 
 
