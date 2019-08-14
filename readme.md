@@ -12,7 +12,7 @@ To be able to run any JVM language script
 Scriptly is pretty simple actually, so simple I can't believe no one has tried it before. 
 You execute the Scriptly main method passing in the name of the language and a file. 
 
-Example: "scriptly kotlin C:\myScalaScript.kotlin someArgForScript"
+Example: "scriptly kotlin C:\myScript.kotlin someArgForScript"
 
 Scriptly will read in the file. 
 
