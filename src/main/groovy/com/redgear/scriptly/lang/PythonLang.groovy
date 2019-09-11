@@ -1,7 +1,9 @@
 package com.redgear.scriptly.lang
 
-class PythonLang extends GenericLang {
+import groovy.transform.CompileStatic
 
+@CompileStatic
+class PythonLang extends GenericLang {
 
   PythonLang(String lang) {
     super(lang)

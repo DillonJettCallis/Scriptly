@@ -5,7 +5,9 @@ import com.redgear.scriptly.config.Config
 import com.redgear.scriptly.lang.*
 import com.redgear.scriptly.repo.Repository
 import com.redgear.scriptly.repo.impl.AetherRepo
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class Scriptly {
 
 
@@ -24,7 +26,9 @@ class Scriptly {
 
     Language language
 
-    if (lang == 'clojure') {
+    if (lang == 'scala') {
+      language = new ScalaLang()
+    } else if (lang == 'clojure') {
       language = new ClojureLang()
     } else if (lang == 'ruby' || lang == 'jruby') {
       language = new RubyLang(lang)

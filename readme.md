@@ -38,9 +38,11 @@ language, passing any extra arguments you provided in a Java String array variab
  
 * Groovy works with no special casing at all. Just include the Groovy library in your dependencies.
  
+* Kotlin is supported, just include the Kotlin jsr223 implementation.
+ 
 * Scala has a jsr223 implementation but it's just a thin wrapper around the Scala repl and isn't 
- fully compliant. The non compliant aspects even have breaking changes between scala versions so I've
- given up trying to support it. Try Kotlin, it's syntactically similar.
+ fully compliant so I've been forced to use the underlying scripting support which has breaking 
+ changes between versions. Tested with scala 1.13, 1.12 and 1.11
 
 * Clojure is special cased because there is no official Clojure jsr223 implementation, however it has it's own
  scripting api that works well and is very simple. The only important note is that Clojure users a String 
@@ -58,20 +60,13 @@ to convert it to a Ruby array.
 put your dependencies in a triple-single-quoted string. Double quoted strings are NOT supported. 
 Example: '''org.python:jython-standalone:2.7.0'''
 
-* Kotlin is supported, just include the Kotlin jsr223 implementation ie: `org.jetbrains.kotlin:kotlin-scripting-jsr223:1.3.40`
- One thing to know is that Kotlin does NOT provide a variable named `args`, instead it has a `Map<String, Any?>` named `bindings`
- and this map has a key named `args`. So to make the typing correct it is recommended you have `val args = bindings["args"] as Array<String>`
- at the top of your script.
-
-* Ceylon is NOT supported as there is not official jsr223 implantation. 
-
 * Lua is supported, though I've only tested with the Luaj implementation, using the language name 'lua' 
  and lua's block comments `--[[` and `]]` should be enough.
+ 
+* Ceylon, Gosu and Golo are NOT supported as they don't have jsr223 implantations. 
 
 * Any language with a jar that fully supports jsr223 should work, with the note that you
  must used Java style comments even if that language doesn't. 
-
-
 
 
 ## Why do I have to include my language's compiler/language?

@@ -1,5 +1,8 @@
 package com.redgear.scriptly.lang
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class KotlinLang extends GenericLang {
 
   KotlinLang() {

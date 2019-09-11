@@ -2,9 +2,11 @@ package com.redgear.scriptly.lang
 
 
 import com.redgear.scriptly.repo.Repository
+import groovy.transform.CompileStatic
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
+@CompileStatic
 trait Language {
 
   abstract void exec(File source, Repository repo, List<String> args)

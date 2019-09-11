@@ -1,12 +1,13 @@
 package com.redgear.scriptly.lang
 
 import com.redgear.scriptly.repo.Repository
+import groovy.transform.CompileStatic
 
-import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 
+@CompileStatic
 class GenericLang implements Language {
 
   String lang
@@ -38,7 +39,7 @@ class GenericLang implements Language {
 
   ClassLoader buildClassLoader(DepInfo deps) {
     def urls = deps.deps.collect {
-      it.toURI().toURL()
+      (it as File).toURI().toURL()
     }
 
     return new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader.parent)

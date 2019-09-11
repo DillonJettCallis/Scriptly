@@ -2,6 +2,7 @@ package com.redgear.scriptly.repo.impl
 
 import com.redgear.scriptly.config.Config
 import com.redgear.scriptly.repo.Repository
+import groovy.transform.CompileStatic
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils
 import org.eclipse.aether.DefaultRepositorySystemSession
 import org.eclipse.aether.RepositorySystem
@@ -24,6 +25,7 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils
 import org.eclipse.aether.util.graph.selector.AndDependencySelector
 import org.eclipse.aether.util.graph.selector.OptionalDependencySelector
 
+@CompileStatic
 class AetherRepo implements Repository {
 
   private final RepositorySystem system

@@ -1,7 +1,10 @@
 package com.redgear.scriptly.config
 
+import groovy.transform.CompileStatic
+
 import java.nio.file.Paths
 
+@CompileStatic
 class Config {
 
   File localCache = Paths.get(System.getProperty('user.home'), '/.m2/repository').toFile()
