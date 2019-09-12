@@ -2,56 +2,40 @@ package com.redgear.scriptly
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.redgear.scriptly.config.Config
-import com.redgear.scriptly.lang.*
-import com.redgear.scriptly.repo.Repository
-import com.redgear.scriptly.repo.impl.AetherRepo
+import com.redgear.scriptly.config.Options
+import com.redgear.scriptly.task.ExecuteTask
+import com.redgear.scriptly.task.InstallTask
+import com.redgear.scriptly.task.RunTask
 import groovy.transform.CompileStatic
+import net.sourceforge.argparse4j.ArgumentParsers
 
 @CompileStatic
 class Scriptly {
 
+  /** Used with ArgParse as key. **/
+  private static final String taskKey = 'task'
 
   static void main(String[] args) {
 
     Config config = loadConfig()
 
-    Repository repo = new AetherRepo(config)
+    def options = parseOptions(args)
 
-    if (args.length < 2) {
-      throw new Exception("Expecting at least two arguments, language and source file")
-    }
+    options.task.exec(config, options)
+  }
 
-    def lang = args[0]
-    def source = args[1]
-
-    Language language
-
-    if (lang == 'scala') {
-      language = new ScalaLang()
-    } else if (lang == 'clojure') {
-      language = new ClojureLang()
-    } else if (lang == 'ruby' || lang == 'jruby') {
-      language = new RubyLang(lang)
-    } else if (lang == 'python' || lang == 'jython') {
-      language = new PythonLang(lang)
-    } else if (lang == 'kotlin') {
-      language = new KotlinLang()
-    } else if (lang == 'lua' || lang == 'luaj') {
-      language = new LuaLang(lang)
+  static File baseDir() {
+    def home = System.getProperty("SCRIPTLY_HOME")
+    if (home) {
+      return new File(home)
     } else {
-      language = new GenericLang(lang)
+      return new File(System.getProperty('user.home') + '/.scriptly')
     }
-
-
-    def file = new File(source)
-
-    language.exec(file, repo, args.toList().subList(2, args.length))
-
   }
 
   private static Config loadConfig() {
 
-    def configFile = new File(System.getProperty('user.home') + '/.scriptly/config.json')
+    def configFile = new File(baseDir(), 'config.json')
 
     if (configFile.exists()) {
       return new ObjectMapper().readValue(configFile, Config.class)
@@ -63,5 +47,26 @@ class Scriptly {
     }
   }
 
+  private static Options parseOptions(String[] args) {
+    def parser = ArgumentParsers.newFor('scriptly').build()
 
+    def commandParsers = parser.addSubparsers().metavar('command')
+
+    def execTask = commandParsers.addParser('exec').setDefault(taskKey, new ExecuteTask()).help('execute a script')
+    execTask.addArgument('language').required(true).help('language name')
+    execTask.addArgument('source').required(true).help('source file')
+    execTask.addArgument('args').nargs('*').help('script arguments')
+
+    def runTask = commandParsers.addParser('run').setDefault(taskKey, new RunTask()).help('run a script with dependencies')
+    runTask.addArgument('language').required(true).help('language name')
+    runTask.addArgument('source').required(true).help('source file')
+    runTask.addArgument('deps').required(true).help('directory containing all dependencies (must be in .jar files)')
+    runTask.addArgument('args').nargs('*').help('script arguments')
+
+    def installTask = commandParsers.addParser('install').setDefault(taskKey, new InstallTask()).help("install a script and it's dependencies")
+    installTask.addArgument('language').required(true).help('language name')
+    installTask.addArgument('source').required(true).help('source file')
+
+    return parser.parseArgsOrFail(args).attrs as Options
+  }
 }

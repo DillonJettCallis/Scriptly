@@ -1,14 +1,13 @@
 package com.redgear.scriptly.lang
 
-import com.redgear.scriptly.repo.Repository
-
 class ClojureLang implements Language {
 
-  @Override
-  void exec(File source, Repository repo, List<String> args) {
-    def deps = parse(source, repo)
+  String name = 'clojure'
 
-    def urls = deps.deps.collect {
+  @Override
+  void run(String src, Set<File> deps, String[] args) {
+
+    def urls = deps.collect {
       it.toURI().toURL()
     }
 

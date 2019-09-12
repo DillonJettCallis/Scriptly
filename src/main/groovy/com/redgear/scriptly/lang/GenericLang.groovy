@@ -1,6 +1,6 @@
 package com.redgear.scriptly.lang
 
-import com.redgear.scriptly.repo.Repository
+
 import groovy.transform.CompileStatic
 
 import javax.script.ScriptContext
@@ -10,42 +10,40 @@ import javax.script.ScriptEngineManager
 @CompileStatic
 class GenericLang implements Language {
 
-  String lang
+  String name
 
-  GenericLang(String lang) {
-    this.lang = lang
+  GenericLang(String name) {
+    this.name = name
   }
 
   @Override
-  void exec(File source, Repository repo, List<String> args) {
-    run(source, repo, lang, args)
-  }
-
-  void run(File source, Repository repo, String engineName, List<String> args) {
-    def deps = parse(source, repo)
-
+  void run(String src, Set<File> deps, String[] args) {
     def loader = buildClassLoader(deps)
 
-    def manager = new ScriptEngineManager(loader)
-
-    ScriptEngine engine = manager.getEngineByName(engineName)
+    def engine = loadEngine(loader)
 
     if (engine == null) {
-      throw new Exception("Failed to load Script Engine. Either '$lang' language is not supported or the script is missing the correct dependency. ")
+      throw new Exception("Failed to load Script Engine. Either '$name' language is not supported or the script is missing the correct dependency. ")
     }
 
-    runWithEngine(engine, loader, deps, args)
+    runWithEngine(src, engine, loader, args)
   }
 
-  ClassLoader buildClassLoader(DepInfo deps) {
-    def urls = deps.deps.collect {
-      (it as File).toURI().toURL()
+  ScriptEngine loadEngine(ClassLoader loader) {
+    def manager = new ScriptEngineManager(loader)
+
+    return manager.getEngineByName(name)
+  }
+
+  ClassLoader buildClassLoader(Set<File> deps) {
+    def urls = deps.collect {
+      it.toURI().toURL()
     }
 
     return new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader.parent)
   }
 
-  void runWithEngine(ScriptEngine engine, ClassLoader loader, DepInfo deps, List<String> args) {
+  void runWithEngine(String source, ScriptEngine engine, ClassLoader loader, String[] args) {
     def oldLoader = Thread.currentThread().getContextClassLoader()
 
     try {
@@ -55,7 +53,7 @@ class GenericLang implements Language {
 
       bind.put('args', args)
 
-      engine.eval(deps.source)
+      engine.eval(source)
     } finally {
       Thread.currentThread().setContextClassLoader(oldLoader)
     }

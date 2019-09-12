@@ -9,7 +9,33 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 @CompileStatic
 trait Language {
 
-  abstract void exec(File source, Repository repo, List<String> args)
+  abstract String name
+
+  void exec(File source, Repository repo, String[] args) {
+    def info = parse(source, repo)
+
+    run(info.source, info.deps as Set<File>, args)
+  }
+
+  abstract void run(String src, Set<File> deps, String[] args)
+
+  static Language lookup(String lang) {
+    if (lang == 'scala') {
+      return new ScalaLang()
+    } else if (lang == 'clojure') {
+      return new ClojureLang()
+    } else if (lang == 'ruby' || lang == 'jruby') {
+      return new RubyLang(lang)
+    } else if (lang == 'python' || lang == 'jython') {
+      return new PythonLang(lang)
+    } else if (lang == 'kotlin') {
+      return new KotlinLang()
+    } else if (lang == 'lua' || lang == 'luaj') {
+      return new LuaLang(lang)
+    } else {
+      return new GenericLang(lang)
+    }
+  }
 
   String commentStart() {
     return '/*'

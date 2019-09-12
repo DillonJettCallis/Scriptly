@@ -14,7 +14,7 @@ class ScalaLangTest {
 
     def lang = new ScalaLang()
 
-    lang.exec(new File("C:\\Users\\Dillon\\Projects\\Scriptly\\src\\test\\resources\\test.scala"), repo, ['Hello', 'World'])
+    lang.exec(new File("C:\\Users\\Dillon\\Projects\\Scriptly\\src\\test\\resources\\test.scala"), repo, ['Hello', 'World'] as String[])
   }
 
 }

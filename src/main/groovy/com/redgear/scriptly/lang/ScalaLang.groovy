@@ -1,6 +1,6 @@
 package com.redgear.scriptly.lang
 
-import com.redgear.scriptly.repo.Repository
+
 import groovy.transform.CompileStatic
 
 class ScalaLang extends GenericLang {
@@ -11,9 +11,7 @@ class ScalaLang extends GenericLang {
 
   @Override
   @CompileStatic
-  void run(File source, Repository repo, String engineName, List<String> args) {
-    def deps = parse(source, repo)
-
+  void run(String src, Set<File> deps, String[] args) {
     def loader = buildClassLoader(deps)
 
     def oldLoader = Thread.currentThread().getContextClassLoader()
@@ -21,12 +19,12 @@ class ScalaLang extends GenericLang {
     try {
       Thread.currentThread().setContextClassLoader(loader)
 
-      def newPath = deps.deps.collect { it.toString() }.join(File.pathSeparator)
+      def newPath = deps.collect { it.toString() }.join(File.pathSeparator)
 
       if (hasClass(loader, 'scala.tools.nsc.interpreter.shell.ReplReporterImpl')) {
-        runScala13(deps.source, loader, newPath, args)
+        runScala13(src, loader, newPath, args)
       } else {
-        runScala12(deps.source, loader, newPath, args)
+        runScala12(src, loader, newPath, args)
       }
 
     } finally {
@@ -44,7 +42,7 @@ class ScalaLang extends GenericLang {
     }
   }
 
-  private static void runScala12(String src, ClassLoader loader, String newPath, List<String> args) {
+  private static void runScala12(String src, ClassLoader loader, String newPath, String[] args) {
     def settings = loader.loadClass("scala.tools.nsc.Settings").newInstance([] as Object[])
     settings.classpath().value_$eq(newPath)
 
@@ -63,7 +61,7 @@ class ScalaLang extends GenericLang {
     }
   }
 
-  private static void runScala13(String src, ClassLoader loader, String newPath, List<String> args) {
+  private static void runScala13(String src, ClassLoader loader, String newPath, String[] args) {
     def settings = loader.loadClass("scala.tools.nsc.Settings").newInstance([] as Object[])
     settings.classpath().value_$eq(newPath)
 
