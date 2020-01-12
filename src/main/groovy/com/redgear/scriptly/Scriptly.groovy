@@ -6,6 +6,7 @@ import com.redgear.scriptly.config.Options
 import com.redgear.scriptly.task.ExecuteTask
 import com.redgear.scriptly.task.InstallTask
 import com.redgear.scriptly.task.RunTask
+import com.redgear.scriptly.task.UninstallTask
 import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -94,6 +95,17 @@ class Scriptly {
 
         return new Options(task: new InstallTask(), language: args[1], source: args[2])
       }
+      case 'uninstall': {
+        if (args.length != 2) {
+          stop(helpUninstallMessage)
+        }
+
+        if (args[1] in helpFlags) {
+          stop(helpUninstallMessage, false)
+        }
+
+        return new Options(task: new UninstallTask(), source: args[1])
+      }
       default:
         stop()
     }
@@ -114,6 +126,7 @@ positional arguments:
     exec                 execute a script
     run                  run a script with dependencies
     install              install a script and it's dependencies
+    uninstall            delete a script that has been installed
 
 named arguments:
   -h, --help             show this help message and exit
@@ -148,6 +161,15 @@ named arguments:
 positional arguments:
   language               language name
   source                 source file
+
+named arguments:
+  -h, --help             show this help message and exit
+'''
+
+  private static final String helpUninstallMessage = '''usage: scriptly uninstall [-h] script
+
+positional arguments:
+  script                 script to remove
 
 named arguments:
   -h, --help             show this help message and exit

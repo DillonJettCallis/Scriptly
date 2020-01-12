@@ -5,8 +5,9 @@ import com.redgear.scriptly.config.Config
 import com.redgear.scriptly.config.Options
 import com.redgear.scriptly.lang.GenericLang
 import com.redgear.scriptly.repo.impl.AetherRepo
+import groovy.transform.CompileStatic
 
-
+@CompileStatic
 class InstallTask implements Task {
 
   @Override
