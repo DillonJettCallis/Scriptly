@@ -1,6 +1,7 @@
 package com.redgear.scriptly.lang
 
-
+import com.redgear.scriptly.repl.GenericRepl
+import com.redgear.scriptly.repl.Repl
 import groovy.transform.CompileStatic
 
 import javax.script.ScriptContext
@@ -33,6 +34,11 @@ class GenericLang implements Language {
     def manager = new ScriptEngineManager(loader)
 
     return manager.getEngineByName(name)
+  }
+
+  @Override
+  Repl repl(Set<File> deps) {
+    return new GenericRepl(loadEngine(buildClassLoader(deps)))
   }
 
   ClassLoader buildClassLoader(Set<File> deps) {

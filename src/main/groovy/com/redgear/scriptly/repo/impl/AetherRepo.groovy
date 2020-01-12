@@ -45,6 +45,10 @@ class AetherRepo implements Repository {
 
   @Override
   List<File> resolvePackages(List<String> deps) {
+    if (deps.isEmpty()) {
+      return []
+    }
+
     def rawDeps = deps.collect { new Dependency(new DefaultArtifact(it), JavaScopes.COMPILE) }
 
     DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE, JavaScopes.RUNTIME);

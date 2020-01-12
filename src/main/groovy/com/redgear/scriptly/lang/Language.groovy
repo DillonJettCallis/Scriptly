@@ -1,6 +1,6 @@
 package com.redgear.scriptly.lang
 
-
+import com.redgear.scriptly.repl.Repl
 import com.redgear.scriptly.repo.Repository
 import groovy.transform.CompileStatic
 
@@ -18,6 +18,8 @@ trait Language {
   }
 
   abstract void run(String src, Set<File> deps, String[] args)
+
+  abstract Repl repl(Set<File> deps)
 
   static Language lookup(String lang) {
     if (lang == 'scala') {

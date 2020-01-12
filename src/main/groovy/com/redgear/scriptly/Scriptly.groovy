@@ -5,6 +5,7 @@ import com.redgear.scriptly.config.Config
 import com.redgear.scriptly.config.Options
 import com.redgear.scriptly.task.ExecuteTask
 import com.redgear.scriptly.task.InstallTask
+import com.redgear.scriptly.task.ReplTask
 import com.redgear.scriptly.task.RunTask
 import groovy.transform.CompileStatic
 import net.sourceforge.argparse4j.ArgumentParsers
@@ -66,6 +67,10 @@ class Scriptly {
     def installTask = commandParsers.addParser('install').setDefault(taskKey, new InstallTask()).help("install a script and it's dependencies")
     installTask.addArgument('language').required(true).help('language name')
     installTask.addArgument('source').required(true).help('source file')
+
+    def replTask = commandParsers.addParser('repl').setDefault(taskKey, new ReplTask()).help('begin a repl in this language')
+    replTask.addArgument('language').required(true).help('language name')
+    replTask.addArgument('deps').required(true).help('dependencies of repl separated by ";"')
 
     return parser.parseArgsOrFail(args).attrs as Options
   }

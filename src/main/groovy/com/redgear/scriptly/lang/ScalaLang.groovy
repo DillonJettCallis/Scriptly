@@ -1,6 +1,7 @@
 package com.redgear.scriptly.lang
 
-
+import com.redgear.scriptly.repl.GenericRepl
+import com.redgear.scriptly.repl.Repl
 import groovy.transform.CompileStatic
 
 class ScalaLang extends GenericLang {
@@ -30,6 +31,11 @@ class ScalaLang extends GenericLang {
     } finally {
       Thread.currentThread().setContextClassLoader(oldLoader)
     }
+  }
+
+  @Override
+  Repl repl(Set<File> deps) {
+    return new GenericRepl(loadEngine(buildClassLoader(deps)))
   }
 
   @CompileStatic
@@ -79,6 +85,21 @@ class ScalaLang extends GenericLang {
 
     if ("$result" == 'Error') {
       println(writer)
+    }
+  }
+
+  private static class ScalaRepl implements Repl {
+
+    private final def main
+
+    ScalaRepl(def main) {
+      this.main = main
+    }
+
+    @Override
+    Object nextLine(String raw) {
+      main.interpret(raw)
+      return ""
     }
   }
 
