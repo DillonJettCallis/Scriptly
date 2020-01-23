@@ -71,7 +71,7 @@ class Scriptly {
           stop(helpExecMessage, false)
         }
 
-        return new Options(task: new ExecuteTask(), language: args[1], source: args[2], args: args[3..args.length - 1])
+        return new Options(task: new ExecuteTask(), language: args[1], source: args[2], args: rest(args, 3))
       }
       case 'run': {
         if (args.length < 4) {
@@ -82,7 +82,7 @@ class Scriptly {
           stop(helpRunMessage, false)
         }
 
-        return new Options(task: new RunTask(), language: args[1], source: args[2], deps: args[3], args: args[4..args.length - 1])
+        return new Options(task: new RunTask(), language: args[1], source: args[2], deps: args[3], args: rest(args, 4))
       }
       case 'install': {
         if (args.length != 3) {
@@ -108,6 +108,14 @@ class Scriptly {
       }
       default:
         stop()
+    }
+  }
+
+  private static List<String> rest(String[] arr, int index) {
+    if (arr.length > index) {
+      return arr[index.. arr.length - 1]
+    } else {
+      return [];
     }
   }
 
