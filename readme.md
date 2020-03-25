@@ -12,14 +12,14 @@ To be able to run any JVM language script
 Scriptly is pretty simple actually, so simple I can't believe no one has tried it before. 
 You execute the Scriptly main method passing in the name of the language and a file. 
 
-Example: "scriptly kotlin C:\myScript.kotlin someArgForScript"
+Example: "scriptly exec kotlin C:\myScript.kotlin someArgForScript"
 
 Scriptly will read in the file. 
 
 
 * If your file starts with a `#!` or `::#!`, then all lines until a corresponding `!#` or `::!#`  will be skipped. 
  This is to allow standalone shell scripts in either bash or cmd. (More info below).
-* Then Scriptly will look for a comment. This will depend on the language, but by default it will try to find a C 
+* Then Scriptly will look for a comment. This will depend on the language, but by default it will try to find a Java 
 style block comment begining with /* and ending with */. (Please note that any extra '\*' are not allowed)
 * If that comment is found Scriptly will read it and it will expect it to contain a list of Maven dependencies
 delimited by whitespace in Gradle short style, ie: groupId:artifactId:version. 
@@ -82,7 +82,7 @@ Here are some examples on how you can use Scriptly for standalone polyglot shell
 * *nix
 ```bash
 #!
-exec scriptly groovy "$0" "$@"
+exec scriptly exec groovy "$0" "$@"
 !#
 
 /*
@@ -97,7 +97,7 @@ println 'Hello World'
 ```batch 
 ::#!
 @echo off
-scriptly groovy %~dpnx0 %*
+scriptly exec groovy %~dpnx0 %*
 goto :eof
 ::!#
 
