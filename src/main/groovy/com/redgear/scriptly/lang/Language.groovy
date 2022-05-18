@@ -20,11 +20,7 @@ trait Language {
   abstract void run(String src, Set<File> deps, String[] args)
 
   static Language lookup(String lang) {
-    if (lang == 'scala') {
-      return new ScalaLang()
-    } else if (lang == 'clojure') {
-      return new ClojureLang()
-    } else if (lang == 'ruby' || lang == 'jruby') {
+    if (lang == 'ruby' || lang == 'jruby') {
       return new RubyLang(lang)
     } else if (lang == 'python' || lang == 'jython') {
       return new PythonLang(lang)
@@ -32,6 +28,8 @@ trait Language {
       return new KotlinLang()
     } else if (lang == 'lua' || lang == 'luaj') {
       return new LuaLang(lang)
+    } else if(lang == 'Renjin') {
+      return new RenjinLang(lang)
     } else {
       return new GenericLang(lang)
     }

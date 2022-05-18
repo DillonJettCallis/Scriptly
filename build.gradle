@@ -1,20 +1,13 @@
 plugins {
   id 'application'
   id 'groovy'
-  id 'maven'
 }
 
 group 'com.redgear'
 version '1.0.0'
 
 application {
-  mainClassName = 'com.redgear.scriptly.Scriptly'
-}
-
-jar {
-  manifest {
-    attributes 'Main-Class': 'com.redgear.scriptly.Scriptly'
-  }
+  mainClass.set('com.redgear.scriptly.Scriptly')
 }
 
 repositories {
@@ -22,20 +15,20 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.codehaus.groovy:groovy:3.0.0-rc-2'
+  implementation 'org.apache.groovy:groovy:4.0.2'
 
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9.2'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
 
-  implementation 'org.apache.maven.resolver:maven-resolver-api:1.4.0'
-  implementation 'org.apache.maven.resolver:maven-resolver-impl:1.4.0'
-  implementation 'org.apache.maven.resolver:maven-resolver-connector-basic:1.4.0'
-  implementation 'org.apache.maven.resolver:maven-resolver-transport-file:1.4.0'
-  implementation 'org.apache.maven.resolver:maven-resolver-transport-http:1.4.0'
+  implementation 'org.apache.maven.resolver:maven-resolver-api:1.8.0'
+  implementation 'org.apache.maven.resolver:maven-resolver-impl:1.8.0'
+  implementation 'org.apache.maven.resolver:maven-resolver-connector-basic:1.8.0'
+  implementation 'org.apache.maven.resolver:maven-resolver-transport-file:1.8.0'
+  implementation 'org.apache.maven.resolver:maven-resolver-transport-http:1.8.0'
 
-  implementation 'org.apache.maven:maven-resolver-provider:3.6.1'
+  implementation 'org.apache.maven:maven-resolver-provider:3.8.5'
 
-  implementation 'org.slf4j:slf4j-api:1.7.21'
-  implementation 'org.slf4j:slf4j-simple:1.7.21'
+  implementation 'org.slf4j:slf4j-api:1.7.36'
+  implementation 'org.slf4j:slf4j-simple:1.7.36'
 
-  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }

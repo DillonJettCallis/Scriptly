@@ -22,17 +22,21 @@ class GenericLang implements Language {
 
     def engine = loadEngine(loader)
 
-    if (engine == null) {
-      throw new Exception("Failed to load Script Engine. Either '$name' language is not supported or the script is missing the correct dependency. ")
-    }
-
     runWithEngine(src, engine, loader, args)
   }
 
   ScriptEngine loadEngine(ClassLoader loader) {
     def manager = new ScriptEngineManager(loader)
 
-    return manager.getEngineByName(name)
+    def engine = manager.getEngineByName(name)
+
+    if (engine == null) {
+      def languages = manager.engineFactories*.names.flatten()
+
+      throw new Exception("Failed to load Script Engine. Either '$name' language is not supported or the script is missing the correct dependency.\n\nKnown languages are: $languages")
+    }
+
+    return engine
   }
 
   ClassLoader buildClassLoader(Set<File> deps) {

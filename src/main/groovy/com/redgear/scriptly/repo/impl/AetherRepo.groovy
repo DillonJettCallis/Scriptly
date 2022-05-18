@@ -18,6 +18,7 @@ import org.eclipse.aether.repository.RemoteRepository
 import org.eclipse.aether.resolution.DependencyRequest
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
+import org.eclipse.aether.spi.locator.ServiceLocator
 import org.eclipse.aether.transport.file.FileTransporterFactory
 import org.eclipse.aether.transport.http.HttpTransporterFactory
 import org.eclipse.aether.util.artifact.JavaScopes
@@ -68,7 +69,7 @@ class AetherRepo implements Repository {
     LocalRepository localRepo = new LocalRepository(localRepoFile);
     session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 
-    session.setDependencySelector(new AndDependencySelector(session.getDependencySelector(), new OptionalDependencySelector().deriveChildSelector(null)))
+    session.setDependencySelector(new AndDependencySelector(session.getDependencySelector(), new OptionalDependencySelector()))
 
     return session;
   }

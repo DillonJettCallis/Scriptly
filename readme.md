@@ -32,41 +32,42 @@ language, passing any extra arguments you provided in a Java String array variab
 
 ## Language implementations
 
-* Java is not supported as it don't have a standard jsr223 implementation. 
+* Java is not supported as it doesn't have a standard jsr223 implementation. 
  Non-standard implementations do exist, but use at your own risk.
  Try using Groovy instead, it supports most Java syntax
- 
-* Groovy works with no special casing at all. Just include the Groovy library in your dependencies.
- 
-* Kotlin is supported, just include the Kotlin jsr223 implementation.
- 
-* Scala has a jsr223 implementation but it's just a thin wrapper around the Scala repl and isn't 
- fully compliant so I've been forced to use the underlying scripting support which has breaking 
- changes between versions. Tested with scala 1.13, 1.12 and 1.11
 
-* Clojure is special cased because there is no official Clojure jsr223 implementation, however it has it's own
- scripting api that works well and is very simple. The only important note is that Clojure users a String 
- instead of a comment to hold it's maven dependencies. Just use a single double-quote string at the top of your file. 
- 
-* Javascript requires no special casing at all. If you're on Java 8+ nashorn will be used and before that, rhino. 
-You can in fact use 'nashorn', 'rhino' or 'ecmascript' as language names. 
+* Groovy works with no special casing at all. Just include the Groovy library in your dependencies.
+
+* Kotlin is supported, just include the Kotlin jsr223 implementation.
+
+* Scala supposedly has a jsr223 implementation, but it does not seem to actually work. You are welcome to try as in theory
+ it shouldn't need any special handling.
+
+* Clojure has not official jsr223 implementation. There are unofficial ones, but you use them at your own risk.
+
+* Javascript requires no special casing at all. Java 8 through 14 included the nashorn engine by default, so you won't
+ even need any dependencies but for Java 15+ it is still possible to add an explicit nashorn dependency.
 
 * Ruby only has special casing for comments. Put JRuby in your dependencies, call it using language 'ruby' or 'jruby'
-and the parser will look for the comment using "=being" and "=end" at the top of your file. Single line comments are 
-NOT supported. Your arguments will be available in a global Java String array named 'args' so you'll have to use "$args.to_a"
+and the parser will look for the comment using `=being` and `=end` at the top of your file. Single line comments are 
+NOT supported. Your arguments will be available in a Java String array named 'args' so you'll have to use "args.to_a"
 to convert it to a Ruby array. 
 
 * Python like Ruby only has special casing for comments. Just include the Jython standalone, call with 'python' or 'jython' and 
 put your dependencies in a triple-single-quoted string. Double quoted strings are NOT supported. 
-Example: '''org.python:jython-standalone:2.7.0'''
+Example: `'''org.python:jython-standalone:2.7.0'''`
 
 * Lua is supported, though I've only tested with the Luaj implementation, using the language name 'lua' 
  and lua's block comments `--[[` and `]]` should be enough.
- 
-* Ceylon, Gosu and Golo are NOT supported as they don't have jsr223 implantations. 
+
+* R is supported with the Renjin implementation. The language name is 'Renjin' (yes with a capital 'R') and
+ you must use a string instead of comments to hold your dependencies. Other engines may or may not work
+ and if they do you'll have to use java style block comments as that is the default.
+
+* Ceylon, Gosu and Golo are NOT supported as they don't have jsr223 implementations. 
 
 * Any language with a jar that fully supports jsr223 should work, with the note that you
- must used Java style comments even if that language doesn't. 
+ must used Java style comments even if that language doesn't.
 
 
 ## Why do I have to include my language's compiler/language?
@@ -86,7 +87,7 @@ exec scriptly exec groovy "$0" "$@"
 !#
 
 /*
-org.codehaus.groovy:groovy-jsr223:3.0.0-beta-2
+org.apache.groovy:groovy-jsr223:4.0.2
 */
 
 // The rest of the script is now groovy
@@ -102,7 +103,7 @@ goto :eof
 ::!#
 
 /*
-org.codehaus.groovy:groovy-jsr223:3.0.0-beta-2
+org.apache.groovy:groovy-jsr223:4.0.2
 */
 
 // The rest of the script is now groovy
